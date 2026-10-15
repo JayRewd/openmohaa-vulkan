@@ -872,6 +872,11 @@ static void VK_QueuePresent( uint32_t imageIndex ) {
 	presentInfo.pSwapchains = &vk.swapchain;
 	presentInfo.pImageIndices = &imageIndex;
 
+	// Hold presents at least one com_maxfps period apart (same hook as the GL swap).
+	if ( ri.PresentGuard ) {
+		ri.PresentGuard();
+	}
+
 	start = VK_Microseconds();
 	vk.stats.frameToPresentUs += start - vk.frameStartUs;
 	result = qvkQueuePresentKHR( vk.queue, &presentInfo );

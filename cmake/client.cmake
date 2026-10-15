@@ -38,6 +38,7 @@ set(CLIENT_SOURCES
     ${SOURCE_DIR}/client/cl_uimpmappicker.cpp
     ${SOURCE_DIR}/client/cl_uiplayermodelpicker.cpp
     ${SOURCE_DIR}/client/cl_uiradar.cpp
+    ${SOURCE_DIR}/client/cl_fpsbench.cpp
     ${SOURCE_DIR}/client/cl_uiserverlist.cpp
     ${SOURCE_DIR}/client/cl_uisoundpicker.cpp
     ${SOURCE_DIR}/client/cl_uistd.cpp
@@ -121,6 +122,17 @@ target_link_options(            ${CLIENT_BINARY} PRIVATE ${CLIENT_LINK_OPTIONS})
 
 set_output_dirs(${CLIENT_BINARY})
 
+# fpsbench demo, next to the client binary (fs_basepath / main).
+add_custom_command(TARGET ${CLIENT_BINARY} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+        $<TARGET_FILE_DIR:${CLIENT_BINARY}>/main/benchmark
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets/main/benchmark
+        $<TARGET_FILE_DIR:${CLIENT_BINARY}>/main/benchmark
+    COMMENT "Copy fpsbench demo"
+)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets/main/benchmark
+    DESTINATION ${INSTALL_BINDIR_FULL}/main)
 if(NOT USE_RENDERER_DLOPEN)
     target_sources(${CLIENT_BINARY} PRIVATE
         # These are never simultaneously populated
